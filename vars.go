@@ -31,5 +31,5 @@ type vmStats struct {
 
 	HddDiskSize  int `json:"hdd_disk_size,omitempty"`  // The size of all disks attached to vm. Sum of initial_size from Disk struct, in bytes. Group by StorageType (HDD or SSD).
 	SsdDiskSize  int `json:"ssd_disk_size,omitempty"`  // The size of all disks attached to vm. Sum of initial_size from Disk struct, in bytes. Group by StorageType (HDD or SSD).
-	VmDisksCount int `json:"vm_disks_count,omitempty"` // count of attached virtual disks
+	VmDisksCount int `json:"vm_disks_count,omitempty"` // The count of attached virtual disks
 }
