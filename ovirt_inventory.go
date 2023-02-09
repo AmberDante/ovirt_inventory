@@ -28,8 +28,8 @@ func main() {
 		ClientSecret: os.Getenv("OVIRT_PASS"),
 		Scopes:       scope,
 		Endpoint: oauth2.Endpoint{
-			AuthURL:  ovirtUrl,
-			TokenURL: ovirtUrl,
+			AuthURL:  "https://" + ovirtUrl,
+			TokenURL: "https://" + ovirtUrl,
 		},
 	}
 
