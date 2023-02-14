@@ -16,27 +16,30 @@ import (
 )
 
 const ovirtUrl = "ovirttest01.pkcht.ru"
-const apiURI = "/ovirt-engine/api"
+const apiUrl = "/ovirt-engine/api"
+const tokenURL = "/ovirt-engine/sso/oauth/token"
 
 func main() {
 	var user string = "admin@internal"
 	var scope = []string{"ovirt-app-api"}
-	var ovirtAPIurl string = ovirtUrl + apiURI
+	var ovirtAPIurl string = ovirtUrl + apiUrl
 	ctx := context.Background()
+	ovirtPass := os.Getenv("OVIRT_PASS")
 	conf := &oauth2.Config{
 		ClientID:     user,
-		ClientSecret: os.Getenv("OVIRT_PASS"),
+		ClientSecret: ovirtPass,
 		Scopes:       scope,
 		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://" + ovirtUrl,
-			TokenURL: "https://" + ovirtUrl,
+			AuthURL:   "https://" + ovirtUrl + apiUrl,
+			TokenURL:  "https://" + ovirtUrl + tokenURL,
+			AuthStyle: oauth2.AuthStyleInParams,
 		},
 	}
 
 	// Redirect user to consent page to ask for permission
 	// for the scopes specified above.
 	url := conf.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	fmt.Printf("Visit the URL for the auth dialog: %v", url)
+	fmt.Printf("Visit the URL for the auth dialog: %v\n", url)
 
 	// Use the custom HTTP client when requesting a token.
 	tlsClient := &http.Client{Transport: tlsTranstort()}
@@ -153,7 +156,28 @@ func tlsConfig() *tls.Config {
 	return &tls.Config{
 		RootCAs:            rootCAs,
 		InsecureSkipVerify: false,
-		ServerName:         ovirtUrl,
+		CipherSuites: []uint16{
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
+			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
+		},
+		PreferServerCipherSuites: true,
+		SessionTicketsDisabled:   false,
+		SessionTicketKey:         [32]byte{},
+		ClientSessionCache:       nil,
+		// Based on Mozilla intermediate compatibility:
+		// https://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28recommended.29
+		MinVersion: tls.VersionTLS12,
+		MaxVersion: 0,
+		CurvePreferences: []tls.CurveID{
+			tls.CurveP256, tls.CurveP384,
+		},
+		DynamicRecordSizingDisabled: false,
+		Renegotiation:               0,
+		KeyLogWriter:                nil,
 	}
 }
 
