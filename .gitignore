@@ -1,1 +1,5 @@
 /auth
+.vscode/.envpass
+oVirt_CA/ovirt_ca.pem
+ovirt_inventory
+.vscode/launch.json
