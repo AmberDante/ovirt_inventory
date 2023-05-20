@@ -16,3 +16,5 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
+
+replace github.com/ovirt/go-ovirt-client/v3 v3.0.0-alpha1 => github.com/AmberDante/go-ovirt-client/v3 v3.0.1-alpha1
